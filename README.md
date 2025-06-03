@@ -1,62 +1,66 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# React + TypeScript + Vite
+# 3D Tic Tac Toe
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern take on the classic Tic Tac Toe game, built with React and Three.js. This game features a beautiful 3D interface with interactive elements and a starry background.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎮 3D game board with smooth controls
+- ⭐ Beautiful starry background
+- 🎯 Interactive cells with hover effects
+- 🏆 Score tracking system
+- 🔄 Game state management
+- 🎨 Emissive materials for X's and O's
+- 🎥 Orbital camera controls
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React
+- Three.js (via React Three Fiber)
+- TypeScript
+- Vite
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## How to Play
+
+1. The game starts with player X
+2. Click on any empty cell to place your marker
+3. The board can be rotated and viewed from any angle
+4. First player to get three in a row (horizontally, vertically, or diagonally) wins
+5. Score is tracked for both players and draws
+
+## Controls
+
+- **Left Click + Drag**: Rotate the camera
+- **Right Click + Drag**: Pan the camera
+- **Scroll**: Zoom in/out
+- **Click**: Place marker in cell
+
+## Development
+
+To run this project locally:
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Game Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Real-time 3D rendering
+- Interactive cell highlighting
+- Win state detection
+- Draw state handling
+- Score tracking
+- Responsive design
+- Victory animations
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
-=======
-# 3Dtictactoe
->>>>>>> b36154165f4980b2100465ce0226c4d4110ddf14
-=======
-# 3Dtictactoe
->>>>>>> f40b5a10d54a0b19ad0e691a70ef4391e3e6f8d9
+## Future Enhancements
+
+- [ ] Add sound effects
+- [ ] Implement AI opponent
+- [ ] Add multiplayer support
+- [ ] Save game history
+- [ ] Add different themes
+- [ ] Mobile responsive controls
