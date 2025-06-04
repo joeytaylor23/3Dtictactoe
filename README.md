@@ -2,6 +2,8 @@
 
 A modern take on the classic Tic Tac Toe game, built with React, Three.js, and React Three Fiber. Features a beautiful dynamic 3D environment that changes based on the time of day.
 
+_Last updated: [Current Timestamp]_
+
 ## Features
 
 - 3D game board with interactive cells
