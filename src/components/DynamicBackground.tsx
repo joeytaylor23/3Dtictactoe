@@ -7,7 +7,7 @@ import * as THREE from 'three';
 const CartoonCloud = ({ position, scale = 1, speed = 0.1 }: { position: [number, number, number], scale?: number, speed?: number }) => {
   const cloudRef = useRef<THREE.Group>(null);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (cloudRef.current) {
       cloudRef.current.position.x += delta * speed;
       // Reset position when cloud moves too far right
@@ -116,7 +116,7 @@ const Tree = ({ position, scale = 1 }: { position: [number, number, number], sca
 const HighCloud = ({ position, scale = 1, speed = 0.1 }: { position: [number, number, number], scale?: number, speed?: number }) => {
   const cloudRef = useRef<THREE.Group>(null);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (cloudRef.current) {
       cloudRef.current.position.x += delta * speed;
       if (cloudRef.current.position.x > 40) {
@@ -168,7 +168,7 @@ const DynamicBackground = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (cloudsRef.current) {
       cloudsRef.current.rotation.x += delta * 0.05;
       cloudsRef.current.rotation.y += delta * 0.05;
