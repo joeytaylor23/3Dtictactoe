@@ -1,66 +1,59 @@
 # 3D Tic Tac Toe
 
-A modern take on the classic Tic Tac Toe game, built with React and Three.js. This game features a beautiful 3D interface with interactive elements and a starry background.
+A modern take on the classic Tic Tac Toe game, built with React, Three.js, and React Three Fiber. Features a beautiful dynamic 3D environment that changes based on the time of day.
 
 ## Features
 
-- 🎮 3D game board with smooth controls
-- ⭐ Beautiful starry background
-- 🎯 Interactive cells with hover effects
-- 🏆 Score tracking system
-- 🔄 Game state management
-- 🎨 Emissive materials for X's and O's
-- 🎥 Orbital camera controls
+- 3D game board with interactive cells
+- Two game modes: Player vs Player and Player vs CPU
+- Dynamic background that changes with the time of day (morning, afternoon, evening, night)
+- Animated cartoon-style clouds that move across the sky
+- Decorative forest environment with randomly placed trees
+- Intelligent CPU opponent using the Minimax algorithm
+- Score tracking system
+- Responsive design with modern UI
 
 ## Technologies Used
 
 - React
-- Three.js (via React Three Fiber)
+- Three.js
+- React Three Fiber
+- React Three Drei
 - TypeScript
-- Vite
+
+## Getting Started
+
+1. Clone the repository:
+```bash
+git clone [your-repository-url]
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm start
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ## How to Play
 
-1. The game starts with player X
-2. Click on any empty cell to place your marker
-3. The board can be rotated and viewed from any angle
-4. First player to get three in a row (horizontally, vertically, or diagonally) wins
-5. Score is tracked for both players and draws
+1. Select your game mode: "vs CPU" or "vs Player"
+2. Click on any empty cell to place your mark (X or O)
+3. The game will automatically detect wins or draws
+4. Use the "New Game" button to start a new round
+5. Use "Change Mode" to switch between game modes
 
 ## Controls
 
-- **Left Click + Drag**: Rotate the camera
-- **Right Click + Drag**: Pan the camera
-- **Scroll**: Zoom in/out
-- **Click**: Place marker in cell
+- Click and drag to rotate the camera view
+- Scroll to zoom in/out
+- Click on cells to make your move
 
-## Development
+## License
 
-To run this project locally:
-
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-```
-
-## Game Features
-
-- Real-time 3D rendering
-- Interactive cell highlighting
-- Win state detection
-- Draw state handling
-- Score tracking
-- Responsive design
-- Victory animations
-
-## Future Enhancements
-
-- [ ] Add sound effects
-- [ ] Implement AI opponent
-- [ ] Add multiplayer support
-- [ ] Save game history
-- [ ] Add different themes
-- [ ] Mobile responsive controls
+MIT License - feel free to use this code for your own projects!

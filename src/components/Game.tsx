@@ -1,15 +1,21 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Board from './Board';
+import GameModeSelect from './GameModeSelect';
+import DynamicBackground from './DynamicBackground';
+
+type GameMode = 'cpu' | 'player' | null;
 
 const Game = () => {
-  const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X');
+  const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>(() => Math.random() < 0.5 ? 'X' : 'O');
   const [gameBoard, setGameBoard] = useState<(null | 'X' | 'O')[][]>(
     Array(3).fill(null).map(() => Array(3).fill(null))
   );
   const [scores, setScores] = useState({ X: 0, O: 0, Draw: 0 });
   const [winner, setWinner] = useState<'X' | 'O' | 'Draw!' | null>(null);
+  const [gameMode, setGameMode] = useState<GameMode>(null);
+  const [lastWinner, setLastWinner] = useState<'X' | 'O' | null>(null);
 
   const checkWin = useCallback((board: (null | 'X' | 'O')[][], player: 'X' | 'O'): boolean => {
     // Check rows
@@ -27,10 +33,70 @@ const Game = () => {
     return false;
   }, []);
 
+  const getAvailableMoves = (board: (null | 'X' | 'O')[][]): [number, number][] => {
+    const moves: [number, number][] = [];
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (board[i][j] === null) {
+          moves.push([i, j]);
+        }
+      }
+    }
+    return moves;
+  };
+
+  const minimax = (
+    board: (null | 'X' | 'O')[][],
+    depth: number,
+    isMaximizing: boolean
+  ): number => {
+    if (checkWin(board, 'O')) return 10 - depth;
+    if (checkWin(board, 'X')) return depth - 10;
+    if (getAvailableMoves(board).length === 0) return 0;
+
+    if (isMaximizing) {
+      let bestScore = -Infinity;
+      for (const [i, j] of getAvailableMoves(board)) {
+        board[i][j] = 'O';
+        bestScore = Math.max(bestScore, minimax(board, depth + 1, false));
+        board[i][j] = null;
+      }
+      return bestScore;
+    } else {
+      let bestScore = Infinity;
+      for (const [i, j] of getAvailableMoves(board)) {
+        board[i][j] = 'X';
+        bestScore = Math.min(bestScore, minimax(board, depth + 1, true));
+        board[i][j] = null;
+      }
+      return bestScore;
+    }
+  };
+
+  const getCPUMove = (board: (null | 'X' | 'O')[][]): [number, number] => {
+    let bestScore = -Infinity;
+    let bestMove: [number, number] = [0, 0];
+
+    for (const [i, j] of getAvailableMoves(board)) {
+      board[i][j] = 'O';
+      const score = minimax(board, 0, false);
+      board[i][j] = null;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = [i, j];
+      }
+    }
+
+    return bestMove;
+  };
+
   const resetGame = () => {
     setGameBoard(Array(3).fill(null).map(() => Array(3).fill(null)));
     setWinner(null);
-    setCurrentPlayer('X');
+    if (lastWinner) {
+      setCurrentPlayer(lastWinner === 'X' ? 'O' : 'X');
+    }
   };
 
   const handleCellClick = (x: number, y: number) => {
@@ -42,6 +108,7 @@ const Game = () => {
 
     if (checkWin(newBoard, currentPlayer)) {
       setWinner(currentPlayer);
+      setLastWinner(currentPlayer);
       setScores(prev => ({
         ...prev,
         [currentPlayer]: prev[currentPlayer] + 1
@@ -57,18 +124,62 @@ const Game = () => {
     }
   };
 
+  // Add a new useEffect for initial CPU move
+  useEffect(() => {
+    // If game mode is CPU and O is selected to start (randomly), make the first move
+    if (gameMode === 'cpu' && currentPlayer === 'O' && !winner && !gameBoard.flat().some(cell => cell !== null)) {
+      const timer = setTimeout(() => {
+        const [x, y] = getCPUMove(gameBoard);
+        handleCellClick(x, y);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [gameMode]); // Only run when game mode changes
+
+  // Keep the existing useEffect for subsequent CPU moves
+  useEffect(() => {
+    if (gameMode === 'cpu' && currentPlayer === 'O' && !winner) {
+      // Only make a move if it's not the initial state (some moves have been made)
+      if (gameBoard.flat().some(cell => cell !== null)) {
+        const timer = setTimeout(() => {
+          const [x, y] = getCPUMove(gameBoard);
+          handleCellClick(x, y);
+        }, 500);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentPlayer, gameMode, winner]);
+
+  const handleModeSelect = (mode: 'cpu' | 'player') => {
+    setGameMode(mode);
+    setCurrentPlayer(Math.random() < 0.5 ? 'X' : 'O');
+    setGameBoard(Array(3).fill(null).map(() => Array(3).fill(null)));
+    setWinner(null);
+    setLastWinner(null);
+  };
+
+  if (!gameMode) {
+    return (
+      <div style={{ width: '100vw', height: '100vh', position: 'relative', background: '#111' }}>
+        <Canvas camera={{ position: [0, 5, 0], fov: 75 }}>
+          <DynamicBackground />
+        </Canvas>
+        <GameModeSelect onSelectMode={handleModeSelect} />
+      </div>
+    );
+  }
+
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       <Canvas camera={{ position: [0, 5, 0], fov: 75 }}>
-        <color attach="background" args={['#111']} />
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} />
+        <DynamicBackground />
         <Board 
           board={gameBoard} 
           onCellClick={handleCellClick}
           currentPlayer={currentPlayer}
-          winner={(winner || 'Draw!') as 'X' | 'O' | 'Draw!'}
+          winner={(winner || 'Draw!') as 'X' | 'O' | 'Draw!'} 
         />
         <OrbitControls />
       </Canvas>
@@ -86,33 +197,50 @@ const Game = () => {
       }}>
         <h2 style={{ margin: '0 0 10px 0' }}>Tic Tac Toe</h2>
         <div style={{ marginBottom: '10px' }}>
+          <strong>Mode:</strong> {gameMode === 'cpu' ? 'vs CPU' : 'vs Player'}<br />
           <strong>Score:</strong><br />
           Player X: {scores.X}<br />
-          Player O: {scores.O}<br />
+          {gameMode === 'cpu' ? 'CPU' : 'Player O'}: {scores.O}<br />
           Draw: {scores.Draw}
         </div>
         {winner ? (
           <div style={{ marginBottom: '10px', color: '#2196f3' }}>
-            {winner === 'Draw!' ? 'Draw!' : `Player ${winner} wins!`}
+            {winner === 'Draw!' ? 'Draw!' : 
+              `${winner === 'X' ? 'Player X' : (gameMode === 'cpu' ? 'CPU' : 'Player O')} wins!`}
           </div>
         ) : (
           <div style={{ marginBottom: '10px' }}>
-            Current Player: {currentPlayer}
+            Current Player: {currentPlayer === 'X' ? 'Player X' : (gameMode === 'cpu' ? 'CPU' : 'Player O')}
           </div>
         )}
-        <button 
-          onClick={resetGame}
-          style={{
-            padding: '8px 16px',
-            background: '#2196f3',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
-        >
-          New Game
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button 
+            onClick={resetGame}
+            style={{
+              padding: '8px 16px',
+              background: '#2196f3',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          >
+            New Game
+          </button>
+          <button 
+            onClick={() => setGameMode(null)}
+            style={{
+              padding: '8px 16px',
+              background: '#f44336',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          >
+            Change Mode
+          </button>
+        </div>
       </div>
     </div>
   );
